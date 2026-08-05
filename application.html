@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magentic Food Finder</title>
+  <link rel="stylesheet" href="new.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <script async
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTzgeHJJ5WCOMcbNdnv_uzTRN2JxXWH7M&libraries=maps,marker&v=beta" defer>
+</script>
+</head>
+
+
+<body>
+
+   <header>
+   <ul>
+     <a href="index.html">
+       <li>HOME</li>
+     </a>
+     <a>
+       <li>GOALS</li>
+     </a>
+     <img src="logo.png" alt="Logo" class="logo" style="width: 125px;">
+     <a>
+       <li>CONTACT</li>
+     </a>
+     <a href="application.html">
+       <li>FIND A SPOT</li>
+     </a>
+   </ul>
+ </header>
+<div class="container">
+
+    
+    <div class="filters">
+
+        <h1>🍽️ MAD</h1>
+
+        <label>Your Address</label>
+        <input type="text" placeholder="Type your address">
+
+        <label>Price Range</label>
+        <input type="range" min="1" max="5">
+
+        <label>Distance Range</label>
+        <input type="range" min="1" max="25">
+
+        <label>Type of Cuisine</label>
+        <select>
+            <option>Select Cuisine</option>
+            <option>Italian</option>
+            <option>Chinese</option>
+            <option>Mexican</option>
+            <option>American</option>
+        </select>
+
+        <label>Rating Range</label>
+        <select>
+            <option>Select Rating</option>
+            <option>⭐ 5 Stars</option>
+            <option>⭐ 4+ Stars</option>
+            <option>⭐ 3+ Stars</option>
+        </select>
+
+        <label>Accommodations</label>
+        <select>
+            <option>Select</option>
+            <option>Wheelchair Accessible</option>
+            <option>Outdoor Seating</option>
+            <option>Parking</option>
+        </select>
+
+        <button>SEARCH</button>
+
+    </div>
+
+    
+    <div class="map">
+
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18..."
+            loading="lazy">
+        </iframe>
+
+    </div>
+
+       <div class="results">
+
+        <h2>Restaurant List</h2>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/70" alt="">
+            <div>
+                <h3>Restaurant Name</h3>
+                <p>Click for details</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/70" alt="">
+            <div>
+                <h3>Restaurant Name</h3>
+                <p>Click for details</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/70" alt="">
+            <div>
+                <h3>Restaurant Name</h3>
+                <p>Click for details</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/70" alt="">
+            <div>
+                <h3>Restaurant Name</h3>
+                <p>Click for details</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/70" alt="">
+            <div>
+                <h3>Restaurant Name</h3>
+                <p>Click for details</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+  <script src="sketch.js"></script>
+</body>
+
+</html>

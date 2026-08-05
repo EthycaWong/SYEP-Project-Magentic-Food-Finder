@@ -1,0 +1,180 @@
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: arial, helvetica, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  background: #eef1ff;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  /* align-items: center;  ← REMOVED so content starts from top */
+  padding-top: 110px; /* clears the fixed header */
+}
+
+.container {
+  width: 1200px;
+  max-width: 95%;
+  height: calc(100vh - 130px); /* fills remaining space below header */
+  background: white;
+  display: grid;
+  grid-template-columns: 300px 1fr 320px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, .15);
+  margin-bottom: 20px;
+}
+
+/* --- Header (unchanged behavior, just make sure z-index is high) --- */
+header {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: black;
+  padding: 20px 40px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, var(--header-y, 0));
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  height: 90px; /* approximate height for reference */
+}
+
+header ul {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  margin: 0;
+  list-style-type: none;
+  font-family: 'arial black', sans-serif;
+  font-size: 25px;
+  align-items: center;
+}
+
+header ul li {
+  text-shadow: 2px 3px white;
+}
+
+header ul a {
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+header ul a:hover {
+  text-decoration: underline;
+  color: white;
+  animation: grow 0.3s ease forwards;
+}
+
+@keyframes grow {
+  100% { transform: scale(1.25); }
+}
+
+/* --- Filters --- */
+.filters {
+  padding: 30px;
+  background: #edf0ff;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+.filters h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.filters label {
+  font-weight: bold;
+  color: #555;
+}
+
+.filters input[type=text],
+.filters select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+  background: #b9c0e6;
+  color: white;
+}
+
+.filters input[type=range] {
+  width: 100%;
+}
+
+button {
+  margin-top: 20px;
+  padding: 14px;
+  border: none;
+  border-radius: 25px;
+  background: #222;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #444;
+}
+
+/* --- Map --- */
+.map iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* --- Results --- */
+.results {
+  background: #b9988f;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.results h2 {
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+.card h3 {
+  font-size: 17px;
+}
+
+.card p {
+  color: #666;
+  font-size: 14px;
+}
