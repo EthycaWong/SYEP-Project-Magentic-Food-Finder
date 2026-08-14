@@ -1,145 +1,982 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Magentic Food Finder</title>
-  <link rel="stylesheet" href="new.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <script async
-src="https://maps.googleapis.com/maps/api/js?key=&libraries=maps,marker&v=beta" defer>
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Restaurant Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="app.css">
+    <base target="_blank">
 </head>
-
-
 <body>
 
-   <header>
-   <ul>
-     <a href="index.html">
-       <li>HOME</li>
-     </a>
-     <a>
-       <li>GOALS</li>
-     </a>
-     <img src="logo.png" alt="Logo" class="logo" style="width: 125px;">
-     <a>
-       <li>CONTACT</li>
-     </a>
-     <a href="application.html">
-       <li>FIND A SPOT</li>
-     </a>
-   </ul>
- </header>
-<div class="container">
+    <div class="desktop-ui">
+        <div id="map"></div>
+
+        <div class="desktop-topbar">
+            <a href="index.html" class="desktop-logo-link">
+                <img src="logo.png" alt="Logo">
+                <span>Magnetic Food Finder</span>
+            </a>
+            <div class="desktop-search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="address-desktop" placeholder="Enter your address...">
+                <button class="loc-btn" id="loc-btn-desktop" onclick="getCurrentLocation()" title="Use my current location">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+            </div>
+            <button class="desktop-btn desktop-btn-secondary" onclick="toggleSidebar()">
+                <i class="fas fa-sliders-h"></i> Filters
+            </button>
+            <button class="desktop-btn desktop-btn-primary" onclick="searchRestaurants()">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+
+        <button class="sidebar-toggle-btn" id="sidebarToggle" onclick="toggleSidebar()">
+            <i class="fas fa-sliders-h"></i>
+        </button>
+
+        <div class="desktop-sidebar" id="desktopSidebar">
+            <div class="sidebar-header">
+                <h2>Filters</h2>
+                <button class="close-sidebar" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="sidebar-body">
+                <div class="filter-group">
+                    <label>Price Range</label>
+                    <div class="range-row">
+                        <span>$</span>
+                        <span id="price-val-d">3</span>
+                    </div>
+                    <input type="range" id="price-desktop" min="1" max="5" value="3"
+                        oninput="document.getElementById('price-val-d').textContent=this.value">
+                </div>
+                <div class="filter-group">
+                    <label>Max Distance</label>
+                    <div class="range-row">
+                        <span>1 mi</span>
+                        <span id="dist-val-d">5 mi</span>
+                    </div>
+                    <input type="range" id="distance-desktop" min="1" max="25" value="5"
+                        oninput="document.getElementById('dist-val-d').textContent=this.value + ' mi'">
+                </div>
+                <div class="filter-group">
+                    <label>Cuisine</label>
+                    <select id="cuisine-desktop">
+                        <option value="">All Cuisines</option>
+                        <option value="italian">Italian</option>
+                        <option value="chinese">Chinese</option>
+                        <option value="mexican">Mexican</option>
+                        <option value="american">American</option>
+                        <option value="japanese">Japanese</option>
+                        <option value="indian">Indian</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Min Rating</label>
+                    <select id="rating-desktop">
+                        <option value="0">Any Rating</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4+ Stars</option>
+                        <option value="3">3+ Stars</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Accommodations</label>
+                    <select id="accommodation-desktop">
+                        <option value="">None</option>
+                        <option value="wheelchair_accessible_entrance">Wheelchair Accessible</option>
+                        <option value="outdoor_seating">Outdoor Seating</option>
+                        <option value="parking">Parking</option>
+                    </select>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" onclick="resetFiltersDesktop()">Reset</button>
+                <button class="btn btn-primary" onclick="applyFiltersDesktop()">Apply</button>
+            </div>
+        </div>
+
+        <button class="results-toggle-btn" id="resultsToggle" onclick="toggleResults()">
+            <i class="fas fa-list"></i> Results
+        </button>
+
+        <div class="desktop-results collapsed" id="desktopResults">
+            <div class="results-header">
+                <h2>Restaurants</h2>
+                <span class="count" id="resultCountD">0</span>
+            </div>
+            <div class="results-body" id="results-body-d">
+                <div class="empty-state">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>Search to find restaurants near you</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-shell">
+        <div class="mobile-topbar">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <h1>Find Food</h1>
+            <button class="icon-btn" onclick="toggleMobileFilters()" aria-label="Filters">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+        </div>
+
+        <div class="mobile-search-float">
+            <div class="mobile-search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="address-mobile" placeholder="Enter your address...">
+                <button class="loc-btn" id="loc-btn-mobile" onclick="getCurrentLocation()" title="Use my current location">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+            </div>
+            <button class="fab" onclick="searchRestaurants()" aria-label="Search">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <div class="mobile-map-area">
+            <div id="map-mobile"></div>
+        </div>
+
+        <div class="bottom-sheet collapsed" id="bottomSheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+                <h2>Restaurants</h2>
+                <span class="count" id="resultCountM">0</span>
+            </div>
+            <div class="sheet-content" id="results-body-m">
+                <div class="empty-state">
+                    <i class="fas fa-utensils"></i>
+                    <p>Tap search to find restaurants near you</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="toggleMobileFilters()"></div>
+    <div class="filter-modal" id="filterModal">
+        <div class="filter-modal-header">
+            <h2>Filters</h2>
+            <button class="close-btn" onclick="toggleMobileFilters()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="filter-modal-body">
+            <div class="filter-group">
+                <label>Price Range</label>
+                <div class="range-row">
+                    <span>$</span>
+                    <span id="price-val-m">3</span>
+                </div>
+                <input type="range" id="price-mobile" min="1" max="5" value="3"
+                    oninput="document.getElementById('price-val-m').textContent=this.value">
+            </div>
+            <div class="filter-group">
+                <label>Max Distance</label>
+                <div class="range-row">
+                    <span>1 mi</span>
+                    <span id="dist-val-m">5 mi</span>
+                </div>
+                <input type="range" id="distance-mobile" min="1" max="25" value="5"
+                    oninput="document.getElementById('dist-val-m').textContent=this.value + ' mi'">
+            </div>
+            <div class="filter-group">
+                <label>Cuisine</label>
+                <select id="cuisine-mobile">
+                    <option value="">All Cuisines</option>
+                    <option value="italian">Italian</option>
+                    <option value="chinese">Chinese</option>
+                    <option value="mexican">Mexican</option>
+                    <option value="american">American</option>
+                    <option value="japanese">Japanese</option>
+                    <option value="indian">Indian</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Min Rating</label>
+                <select id="rating-mobile">
+                    <option value="0">Any Rating</option>
+                    <option value="5">5 Stars</option>
+                    <option value="4">4+ Stars</option>
+                    <option value="3">3+ Stars</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Accommodations</label>
+                <select id="accommodation-mobile">
+                    <option value="">None</option>
+                    <option value="wheelchair_accessible_entrance">Wheelchair Accessible</option>
+                    <option value="outdoor_seating">Outdoor Seating</option>
+                    <option value="parking">Parking</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-modal-footer">
+            <button class="btn btn-secondary" onclick="resetFiltersMobile()">Reset</button>
+            <button class="btn btn-primary" onclick="applyFiltersMobile()">Apply</button>
+        </div>
+    </div>
+
+    <!-- DETAIL MODAL -->
+    <div class="detail-modal-overlay" id="detailModalOverlay" onclick="closeDetailModal(event)">
+        <div class="detail-modal" id="detailModal" onclick="event.stopPropagation()">
+            <div class="detail-modal-header">
+                <img id="detailImage" src="" alt="">
+                <div class="header-gradient"></div>
+                <button class="close-detail" onclick="closeDetailModal()"><i class="fas fa-times"></i></button>
+                <div class="detail-header-content">
+                    <h2 id="detailName">Restaurant Name</h2>
+                    <div class="detail-header-meta">
+                        <span class="stars"><i class="fas fa-star"></i> <span id="detailRating">4.5</span></span>
+                        <span id="detailPrice">$$</span>
+                        <span id="detailCuisine">Italian</span>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-tabs">
+                <button class="detail-tab active" onclick="switchDetailTab('about')">About</button>
+                <button class="detail-tab" onclick="switchDetailTab('reviews')">Reviews</button>
+            </div>
+            <div class="detail-body" id="detailBody">
+                <!-- Populated by JS -->
+            </div>
+            <div class="detail-actions">
+                <button class="btn btn-review" onclick="openVisitCheck()">
+                    <i class="fas fa-pen"></i> Write a Review
+                </button>
+                <button class="btn btn-directions" id="detailDirectionsBtn">
+                    <i class="fas fa-directions"></i> Directions
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="visit-modal-overlay" id="visitModalOverlay" onclick="closeVisitModal(event)">
+        <div class="visit-modal" onclick="event.stopPropagation()">
+            <div class="visit-icon"><i class="fas fa-utensils"></i></div>
+            <h3>Have you been here?</h3>
+            <p>We want to make sure reviews are honest. Please confirm you've visited this restaurant before writing a review.</p>
+            <div class="visit-buttons">
+                <button class="btn btn-secondary" onclick="closeVisitModal()">Not Yet</button>
+                <button class="btn btn-primary" onclick="confirmVisit()">Yes, I've Been</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RATING MODAL -->
+    <div class="rating-modal-overlay" id="ratingModalOverlay" onclick="closeRatingModal(event)">
+        <div class="rating-modal" onclick="event.stopPropagation()">
+            <h3>Rate Your Experience</h3>
+            <p class="rating-sub" id="ratingRestaurantName">How was Restaurant Name?</p>
+            <div class="star-rating-input" id="starRatingInput">
+                <i class="fas fa-star" data-val="1" onclick="setRating(1)"></i>
+                <i class="fas fa-star" data-val="2" onclick="setRating(2)"></i>
+                <i class="fas fa-star" data-val="3" onclick="setRating(3)"></i>
+                <i class="fas fa-star" data-val="4" onclick="setRating(4)"></i>
+                <i class="fas fa-star" data-val="5" onclick="setRating(5)"></i>
+            </div>
+            <textarea class="rating-textarea" id="ratingText" placeholder="Share details of your own experience at this place... (optional)"></textarea>
+            <div class="rating-platforms">
+                <button class="btn btn-google" onclick="submitRating('google')">
+                    <i class="fab fa-google"></i> Post to Google
+                </button>
+                <button class="btn btn-yelp" onclick="submitRating('yelp')">
+                    <i class="fab fa-yelp"></i> Post to Yelp
+                </button>
+            </div>
+            <button class="rating-cancel" onclick="closeRatingModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('desktopSidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            sidebar.classList.toggle('collapsed');
+            toggle.style.display = sidebar.classList.contains('collapsed') ? 'flex' : 'none';
+        }
+
+        function toggleResults() {
+            const results = document.getElementById('desktopResults');
+            const toggle = document.getElementById('resultsToggle');
+            results.classList.toggle('collapsed');
+            toggle.style.display = results.classList.contains('collapsed') ? 'flex' : 'none';
+        }
+
+        function resetFiltersDesktop() {
+            document.getElementById('price-desktop').value = 3;
+            document.getElementById('price-val-d').textContent = '3';
+            document.getElementById('distance-desktop').value = 5;
+            document.getElementById('dist-val-d').textContent = '5 mi';
+            document.getElementById('cuisine-desktop').value = '';
+            document.getElementById('rating-desktop').value = '0';
+            document.getElementById('accommodation-desktop').value = '';
+        }
+
+        function applyFiltersDesktop() {
+            searchRestaurants();
+        }
+
+
+        let mobileFiltersOpen = false;
+
+        function toggleMobileFilters() {
+            mobileFiltersOpen = !mobileFiltersOpen;
+            document.getElementById('modalOverlay').classList.toggle('active', mobileFiltersOpen);
+            document.getElementById('filterModal').classList.toggle('active', mobileFiltersOpen);
+        }
+
+        function resetFiltersMobile() {
+            document.getElementById('price-mobile').value = 3;
+            document.getElementById('price-val-m').textContent = '3';
+            document.getElementById('distance-mobile').value = 5;
+            document.getElementById('dist-val-m').textContent = '5 mi';
+            document.getElementById('cuisine-mobile').value = '';
+            document.getElementById('rating-mobile').value = '0';
+            document.getElementById('accommodation-mobile').value = '';
+        }
+
+        function applyFiltersMobile() {
+            toggleMobileFilters();
+            searchRestaurants();
+        }
+
+        const sheet = document.getElementById('bottomSheet');
+        if (sheet) {
+            sheet.addEventListener('click', (e) => {
+                if (e.target.closest('.sheet-handle') || e.target.closest('.sheet-header')) {
+                    sheet.classList.toggle('collapsed');
+                }
+            });
+        }
+
+        let map;
+        let markers = [];
+        let infoWindow;
+        let currentLocation = null;
+        const API_KEY = '';
+
+        const cuisineMap = {
+            'italian': 'italian_restaurant',
+            'chinese': 'chinese_restaurant',
+            'mexican': 'mexican_restaurant',
+            'american': 'american_restaurant',
+            'japanese': 'japanese_restaurant',
+            'indian': 'indian_restaurant'
+        };
+
+        let currentPlaceDetail = null;
+        let currentRating = 0;
+
+        function priceLevelToNumber(pl) {
+            if (pl === undefined || pl === null) return 0;
+            if (typeof pl === 'number') return pl;
+            const map = {
+                'PRICE_LEVEL_FREE': 0,
+                'PRICE_LEVEL_INEXPENSIVE': 1,
+                'PRICE_LEVEL_MODERATE': 2,
+                'PRICE_LEVEL_EXPENSIVE': 3,
+                'PRICE_LEVEL_VERY_EXPENSIVE': 4
+            };
+            return map[pl] || 0;
+        }
+
+        function formatPrice(pl) {
+            if (pl === undefined || pl === null) return 'N/A';
+            const num = priceLevelToNumber(pl);
+            if (num === 0) return 'Free';
+            return '$'.repeat(num);
+        }
+
+        function initMap() {
+            const mobile = window.innerWidth <= 768;
+            const el = document.getElementById(mobile ? 'map-mobile' : 'map');
+
+            map = new google.maps.Map(el, {
+                center: { lat: 40.7128, lng: -74.0060 },
+                zoom: 13,
+                mapId: 'restaurant_finder_map',
+                gestureHandling: mobile ? 'greedy' : 'cooperative',
+                mapTypeControl: !mobile,
+                streetViewControl: !mobile,
+                fullscreenControl: !mobile,
+                zoomControl: !mobile
+            });
+            infoWindow = new google.maps.InfoWindow();
+        }
+
+        function clearMarkers() {
+            markers.forEach(m => { m.map = null; });
+            markers = [];
+        }
+
+        function getFilterValues() {
+            const mobile = window.innerWidth <= 768;
+            return {
+                address: document.getElementById(mobile ? 'address-mobile' : 'address-desktop').value.trim(),
+                cuisine: document.getElementById(mobile ? 'cuisine-mobile' : 'cuisine-desktop').value,
+                priceRange: parseInt(document.getElementById(mobile ? 'price-mobile' : 'price-desktop').value),
+                distance: parseInt(document.getElementById(mobile ? 'distance-mobile' : 'distance-desktop').value),
+                minRating: parseInt(document.getElementById(mobile ? 'rating-mobile' : 'rating-desktop').value) || 0
+            };
+        }
+
+        function getCurrentLocation() {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser.');
+                return;
+            }
+
+            const mobile = window.innerWidth <= 768;
+            const inputId = mobile ? 'address-mobile' : 'address-desktop';
+            const btnId = mobile ? 'loc-btn-mobile' : 'loc-btn-desktop';
+            const input = document.getElementById(inputId);
+            const locBtn = document.getElementById(btnId);
+
+            locBtn.classList.add('loading');
+            input.value = 'Getting location...';
+            input.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currentLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    input.value = '\u{1F4CD} Current Location';
+                    input.disabled = false;
+                    locBtn.classList.remove('loading');
+                    searchRestaurants();
+                },
+                (error) => {
+                    input.disabled = false;
+                    locBtn.classList.remove('loading');
+                    currentLocation = null;
+                    input.value = '';
+
+                    let msg = 'Unable to retrieve your location.';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            msg = 'Location access denied. Please enable location permissions in your browser settings.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            msg = 'Location information is unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            msg = 'The location request timed out.';
+                            break;
+                    }
+                    alert(msg);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
 
     
-    <div class="filters">
+        document.getElementById('address-desktop').addEventListener('input', function() {
+            if (this.value !== '\u{1F4CD} Current Location') currentLocation = null;
+        });
+        document.getElementById('address-mobile').addEventListener('input', function() {
+            if (this.value !== '\u{1F4CD} Current Location') currentLocation = null;
+        });
 
-        <h1>🍽️ MAD</h1>
+        let loaderInterval;
+        const loaderPhrases = [
+            'Finding flavors',
+            'Scanning the neighborhood',
+            'Hunting for hotspots',
+            'Tasting the map',
+            'Discovering gems',
+            'Crunching coordinates'
+        ];
+        const loaderSubPhrases = [
+            'Scanning nearby restaurants',
+            'Checking ratings & reviews',
+            'Filtering by your preferences',
+            'Mapping the best spots',
+            'Almost there...',
+            'Plating your results'
+        ];
 
-        <label>Your Address</label>
-        <input type="text" placeholder="Type your address">
+        function showLoader() {
+            const loader = document.getElementById('searchLoader');
+            const textEl = document.getElementById('loaderText');
+            const subEl = document.getElementById('loaderSubtext');
+            loader.classList.add('active');
+            let idx = 0;
+            textEl.textContent = loaderPhrases[0];
+            subEl.textContent = loaderSubPhrases[0];
+            loaderInterval = setInterval(() => {
+                idx = (idx + 1) % loaderPhrases.length;
+                textEl.textContent = loaderPhrases[idx];
+                subEl.textContent = loaderSubPhrases[idx];
+            }, 1800);
+        }
 
-        <label>Price Range</label>
-        <input type="range" min="1" max="5">
+        function hideLoader() {
+            const loader = document.getElementById('searchLoader');
+            clearInterval(loaderInterval);
+            loader.classList.remove('active');
+        }
 
-        <label>Distance Range</label>
-        <input type="range" min="1" max="25">
+        async function performSearch(location, f) {
+            showLoader();
+            const includedTypes = f.cuisine && cuisineMap[f.cuisine]
+                ? [cuisineMap[f.cuisine]]
+                : ['restaurant'];
 
-        <label>Type of Cuisine</label>
-        <select>
-            <option>Select Cuisine</option>
-            <option>Italian</option>
-            <option>Chinese</option>
-            <option>Mexican</option>
-            <option>American</option>
-        </select>
+            const requestBody = {
+                locationRestriction: {
+                    circle: {
+                        center: { latitude: location.lat(), longitude: location.lng() },
+                        radius: f.distance * 1609.34
+                    }
+                },
+                includedTypes: includedTypes,
+                maxResultCount: 20,
+                rankPreference: "DISTANCE"
+            };
 
-        <label>Rating Range</label>
-        <select>
-            <option>Select Rating</option>
-            <option>⭐ 5 Stars</option>
-            <option>⭐ 4+ Stars</option>
-            <option>⭐ 3+ Stars</option>
-        </select>
+            try {
+                const response = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Goog-Api-Key': API_KEY,
+                        'X-Goog-FieldMask': 'places.id,places.displayName,places.location,places.rating,places.priceLevel,places.formattedAddress,places.photos,places.reviews,places.websiteUri,places.nationalPhoneNumber,places.regularOpeningHours,places.editorialSummary,places.types'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
 
-        <label>Accommodations</label>
-        <select>
-            <option>Select</option>
-            <option>Wheelchair Accessible</option>
-            <option>Outdoor Seating</option>
-            <option>Parking</option>
-        </select>
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
 
-        <button>SEARCH</button>
+                const data = await response.json();
+                const places = data.places || [];
 
+                clearMarkers();
+
+                const maxPriceNum = f.priceRange - 1;
+                let filtered = places.filter(place => {
+                    if (f.minRating > 0 && (place.rating || 0) < f.minRating) return false;
+                    const placePrice = priceLevelToNumber(place.priceLevel);
+                    if (placePrice > maxPriceNum) return false;
+                    return true;
+                });
+
+                hideLoader();
+                displayResults(filtered);
+            } catch (error) {
+                hideLoader();
+                const msg = error.message || 'Something went wrong.';
+                if (window.innerWidth <= 768) {
+                    document.getElementById('results-body-m').innerHTML = `
+                        <div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>${msg}</p></div>`;
+                    document.getElementById('resultCountM').textContent = '0';
+                    sheet.classList.remove('collapsed');
+                } else {
+                    document.getElementById('results-body-d').innerHTML = `
+                        <div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>${msg}</p></div>`;
+                    document.getElementById('resultCountD').textContent = '0';
+                    document.getElementById('desktopResults').classList.remove('collapsed');
+                    document.getElementById('resultsToggle').style.display = 'none';
+                }
+            }
+        }
+
+        async function searchRestaurants() {
+            const f = getFilterValues();
+            const mobile = window.innerWidth <= 768;
+            const usingCurrentLoc = currentLocation && f.address === '\u{1F4CD} Current Location';
+
+            if (!f.address && !usingCurrentLoc) {
+                alert('Please enter your address or tap the location button to use your current location.');
+                return;
+            }
+
+            if (usingCurrentLoc) {
+                const location = new google.maps.LatLng(currentLocation.lat, currentLocation.lng);
+                map.setCenter(location);
+                performSearch(location, f);
+            } else {
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ address: f.address }, (results, status) => {
+                    if (status !== 'OK') {
+                        hideLoader();
+                        alert('Could not find that address. Please check the spelling or try using your current location.');
+                        return;
+                    }
+                    const location = results[0].geometry.location;
+                    map.setCenter(location);
+                    performSearch(location, f);
+                });
+            }
+        }
+
+        function displayResults(places) {
+            const mobile = window.innerWidth <= 768;
+            const container = document.getElementById(mobile ? 'results-body-m' : 'results-body-d');
+            const countBadge = document.getElementById(mobile ? 'resultCountM' : 'resultCountD');
+            container.innerHTML = '';
+            countBadge.textContent = places.length;
+
+            if (places.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state"><i class="fas fa-search"></i><p>No restaurants match your filters.</p></div>`;
+                if (mobile) sheet.classList.remove('collapsed');
+                else {
+                    document.getElementById('desktopResults').classList.remove('collapsed');
+                    document.getElementById('resultsToggle').style.display = 'none';
+                }
+                return;
+            }
+
+            const bounds = new google.maps.LatLngBounds();
+
+            places.forEach((place, index) => {
+                const lat = place.location.latitude;
+                const lng = place.location.longitude;
+                const position = new google.maps.LatLng(lat, lng);
+                bounds.extend(position);
+
+                const marker = new google.maps.marker.AdvancedMarkerElement({
+                    map: map,
+                    position: position,
+                    title: place.displayName?.text || 'Restaurant'
+                });
+
+                marker.addEventListener('click', () => {
+                    map.setCenter(position);
+                    map.setZoom(17);
+                    openDetailModal(place);
+                });
+                markers.push(marker);
+
+                const card = document.createElement('div');
+                card.className = 'rest-card';
+                card.style.animationDelay = `${index * 0.06}s`;
+
+                let photoUrl = 'https://via.placeholder.com/64?text=\u{1F37D}';
+                if (place.photos && place.photos.length > 0) {
+                    const photoName = place.photos[0].name;
+                    photoUrl = `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=200&key=${API_KEY}`;
+                }
+
+                const name = place.displayName?.text || 'Unknown';
+                const addr = place.formattedAddress || '';
+                const rating = place.rating ? place.rating.toFixed(1) : 'N/A';
+                const price = formatPrice(place.priceLevel);
+
+                card.innerHTML = `
+                    <img src="${photoUrl}" alt="${name}" loading="lazy">
+                    <div class="rest-info">
+                        <h3>${name}</h3>
+                        <div class="rest-meta">
+                            <span class="stars"><i class="fas fa-star"></i> ${rating}</span>
+                            <span class="price">${price}</span>
+                        </div>
+                        <p class="rest-address">${addr}</p>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    map.setCenter(position);
+                    map.setZoom(17);
+                    openDetailModal(place);
+                });
+
+                container.appendChild(card);
+            });
+
+            map.fitBounds(bounds);
+
+            if (mobile) {
+                sheet.classList.remove('collapsed');
+            } else {
+                document.getElementById('desktopResults').classList.remove('collapsed');
+                document.getElementById('resultsToggle').style.display = 'none';
+            }
+        }
+
+        function showInfo(place, marker) {
+            const name = place.displayName?.text || 'Unknown';
+            const addr = place.formattedAddress || '';
+            const content = `
+                <div style="padding:4px;min-width:180px;">
+                    <strong style="font-size:1rem;">${name}</strong><br>
+                    <span style="color:#666;font-size:0.85rem;">${addr}</span><br>
+                    <span style="color:#f1c40f;">\u{2B50} ${place.rating || 'N/A'}</span>
+                    <span style="color:#e94560;margin-left:8px;">${formatPrice(place.priceLevel)}</span>
+                </div>
+            `;
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+        }
+
+        function openDetailModal(place) {
+            currentPlaceDetail = place;
+            const overlay = document.getElementById('detailModalOverlay');
+            const name = place.displayName?.text || 'Unknown';
+            const rating = place.rating ? place.rating.toFixed(1) : 'N/A';
+            const price = formatPrice(place.priceLevel);
+            
+            // Determine cuisine from types
+            let cuisine = 'Restaurant';
+            if (place.types) {
+                const typeMap = {
+                    'italian_restaurant': 'Italian',
+                    'chinese_restaurant': 'Chinese',
+                    'mexican_restaurant': 'Mexican',
+                    'american_restaurant': 'American',
+                    'japanese_restaurant': 'Japanese',
+                    'indian_restaurant': 'Indian'
+                };
+                for (const t of place.types) {
+                    if (typeMap[t]) { cuisine = typeMap[t]; break; }
+                }
+            }
+
+            document.getElementById('detailName').textContent = name;
+            document.getElementById('detailRating').textContent = rating;
+            document.getElementById('detailPrice').textContent = price;
+            document.getElementById('detailCuisine').textContent = cuisine;
+
+            // Photo
+            let photoUrl = 'https://via.placeholder.com/520x180?text=No+Image';
+            if (place.photos && place.photos.length > 0) {
+                photoUrl = `https://places.googleapis.com/v1/${place.photos[0].name}/media?maxWidthPx=800&key=${API_KEY}`;
+            }
+            document.getElementById('detailImage').src = photoUrl;
+
+            // Directions button
+            const lat = place.location.latitude;
+            const lng = place.location.longitude;
+            document.getElementById('detailDirectionsBtn').onclick = () => {
+                window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+            };
+
+            // Reset to About tab
+            switchDetailTab('about');
+
+            overlay.classList.add('active');
+        }
+
+        function closeDetailModal(e) {
+            if (e && e.target !== e.currentTarget && e.type === 'click') return;
+            document.getElementById('detailModalOverlay').classList.remove('active');
+        }
+
+        function switchDetailTab(tab) {
+            document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderDetailBody(tab);
+        }
+
+        function renderDetailBody(tab) {
+            const place = currentPlaceDetail;
+            const body = document.getElementById('detailBody');
+            if (!place) return;
+
+            if (tab === 'about') {
+                let html = '';
+                
+                // Description / Editorial Summary
+                const summary = place.editorialSummary?.text || '';
+                if (summary) {
+                    html += `<div class="detail-section"><h4>About</h4><p>${summary}</p></div>`;
+                }
+
+                // Info rows
+                html += `<div class="detail-section"><h4>Contact & Info</h4>`;
+                
+                if (place.formattedAddress) {
+                    html += `<div class="detail-info-row"><i class="fas fa-map-marker-alt"></i><span>${place.formattedAddress}</span></div>`;
+                }
+                if (place.nationalPhoneNumber) {
+                    html += `<div class="detail-info-row"><i class="fas fa-phone"></i><a href="tel:${place.nationalPhoneNumber}">${place.nationalPhoneNumber}</a></div>`;
+                }
+                if (place.websiteUri) {
+                    html += `<div class="detail-info-row"><i class="fas fa-globe"></i><a href="${place.websiteUri}" target="_blank">Visit Website</a></div>`;
+                }
+                html += `</div>`;
+
+                // Hours
+                if (place.regularOpeningHours && place.regularOpeningHours.weekdayDescriptions) {
+                    html += `<div class="detail-section"><h4>Hours</h4><div class="hours-list">`;
+                    const days = place.regularOpeningHours.weekdayDescriptions;
+                    const todayIdx = new Date().getDay(); // 0 = Sun
+                    // Google returns Mon-Sun (0-6), JS getDay is Sun-Sat. Map accordingly.
+                    const mapDay = [6, 0, 1, 2, 3, 4, 5]; // Sun->6, Mon->0...
+                    days.forEach((dayStr, idx) => {
+                        const isToday = idx === mapDay[todayIdx];
+                        html += `<div class="hours-row ${isToday ? 'today' : ''}">${dayStr}</div>`;
+                    });
+                    html += `</div></div>`;
+                }
+
+                body.innerHTML = html;
+            } else if (tab === 'reviews') {
+                let html = `<div class="detail-section"><h4>Google Reviews</h4>`;
+                if (place.reviews && place.reviews.length > 0) {
+                    place.reviews.forEach(review => {
+                        const author = review.authorAttribution?.displayName || 'Anonymous';
+                        const initial = author.charAt(0).toUpperCase();
+                        const date = review.relativePublishTimeDescription || '';
+                        const stars = review.rating || 0;
+                        const text = review.text?.text || 'No written review.';
+                        
+                        let starHtml = '';
+                        for (let i = 1; i <= 5; i++) {
+                            starHtml += `<i class="fas fa-star${i <= stars ? '' : ' far'}"></i>`;
+                        }
+
+                        html += `
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="review-author">
+                                        <div class="review-avatar">${initial}</div>
+                                        <div>
+                                            <div class="review-author-name">${author}</div>
+                                            <div class="review-date">${date}</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-stars">${starHtml}</div>
+                                </div>
+                                <div class="review-text">${text}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += `<p style="color:var(--text-muted);font-size:0.9rem;">No reviews available yet.</p>`;
+                }
+                html += `</div>`;
+                body.innerHTML = html;
+            }
+        }
+
+        function openVisitCheck() {
+            closeDetailModal();
+            document.getElementById('visitModalOverlay').classList.add('active');
+        }
+
+        function closeVisitModal(e) {
+            if (e && e.target !== e.currentTarget && e.type === 'click') return;
+            document.getElementById('visitModalOverlay').classList.remove('active');
+        }
+
+        function confirmVisit() {
+            closeVisitModal();
+            openRatingModal();
+        }
+
+        function openRatingModal() {
+            const name = currentPlaceDetail?.displayName?.text || 'this restaurant';
+            document.getElementById('ratingRestaurantName').textContent = `How was ${name}?`;
+            currentRating = 0;
+            updateStarDisplay();
+            document.getElementById('ratingText').value = '';
+            document.getElementById('ratingModalOverlay').classList.add('active');
+        }
+
+        function closeRatingModal(e) {
+            if (e && e.target !== e.currentTarget && e.type === 'click') return;
+            document.getElementById('ratingModalOverlay').classList.remove('active');
+        }
+
+        function setRating(val) {
+            currentRating = val;
+            updateStarDisplay();
+        }
+
+        function updateStarDisplay() {
+            document.querySelectorAll('#starRatingInput i').forEach(star => {
+                const val = parseInt(star.dataset.val);
+                if (val <= currentRating) {
+                    star.classList.add('active');
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('active');
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+
+        function submitRating(platform) {
+            if (currentRating === 0) {
+                alert('Please select a star rating first.');
+                return;
+            }
+
+            const place = currentPlaceDetail;
+            const name = place?.displayName?.text || '';
+            const text = document.getElementById('ratingText').value.trim();
+
+            if (platform === 'google') {
+                // Open Google review page for this place
+                // Note: Writing reviews requires OAuth; we open the place's Google Maps page where user can review
+                const lat = place?.location?.latitude || '';
+                const lng = place?.location?.longitude || '';
+                const query = encodeURIComponent(name + ' ' + (place?.formattedAddress || ''));
+                // Try to open Google Maps place search which will show review button if signed in
+                window.open(`https://search.google.com/local/writereview?placeid=${place?.id || ''}`, '_blank');
+                // Fallback if no place_id available in new API format
+                if (!place?.id) {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                }
+            } else if (platform === 'yelp') {
+                // Search Yelp for this restaurant
+                const query = encodeURIComponent(name + ' ' + (place?.formattedAddress || ''));
+                window.open(`https://www.yelp.com/search?find_desc=${encodeURIComponent(name)}&find_loc=${encodeURIComponent(place?.formattedAddress || '')}`, '_blank');
+            }
+
+            closeRatingModal();
+            
+            // Show success feedback
+            setTimeout(() => {
+                alert(`Thanks for your ${currentRating}-star review! You'll be redirected to ${platform === 'google' ? 'Google Maps' : 'Yelp'} to finalize your post.`);
+            }, 300);
+        }
+
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                location.reload();
+            }, 400);
+        });
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&loading=async&libraries=marker"></script>
+
+    <div class="search-loader" id="searchLoader">
+        <div class="loader-radar">
+            <div class="loader-sweep"></div>
+            <div class="loader-core">
+                <i class="fas fa-utensils"></i>
+            </div>
+        </div>
+        <div class="loader-text" id="loaderText">Finding flavors</div>
+        <div class="loader-subtext" id="loaderSubtext">Scanning nearby restaurants</div>
+        <div class="loader-progress">
+            <div class="loader-progress-bar"></div>
+        </div>
     </div>
 
-    
-    <div class="map">
-
-        <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18..."
-            loading="lazy">
-        </iframe>
-
-    </div>
-
-       <div class="results">
-
-        <h2>Restaurant List</h2>
-
-        <div class="card">
-            <img src="https://via.placeholder.com/70" alt="">
-            <div>
-                <h3>Restaurant Name</h3>
-                <p>Click for details</p>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://via.placeholder.com/70" alt="">
-            <div>
-                <h3>Restaurant Name</h3>
-                <p>Click for details</p>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://via.placeholder.com/70" alt="">
-            <div>
-                <h3>Restaurant Name</h3>
-                <p>Click for details</p>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://via.placeholder.com/70" alt="">
-            <div>
-                <h3>Restaurant Name</h3>
-                <p>Click for details</p>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://via.placeholder.com/70" alt="">
-            <div>
-                <h3>Restaurant Name</h3>
-                <p>Click for details</p>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-  <script src="sketch.js"></script>
 </body>
-
 </html>
