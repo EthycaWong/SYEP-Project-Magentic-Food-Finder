@@ -3,7 +3,7 @@ let ticking = false;
 const header = document.querySelector("header");
 let currentSlide = 0;
 
-/* ========== HEADER HIDE/SHOW ========== */
+
 window.addEventListener("scroll", () => {
   if (!header) return;
 
