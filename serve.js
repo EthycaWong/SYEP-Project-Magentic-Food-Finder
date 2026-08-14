@@ -28,9 +28,9 @@ window.addEventListener("scroll", () => {
   }
 });
 
-/* ========== DOM READY ========== */
+
 document.addEventListener("DOMContentLoaded", () => {
-  /* ----- Hamburger Menu ----- */
+
   const hamburger = document.querySelector(".hamburger");
   const navMenu = document.querySelector(".nav-menu");
 
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ----- Section One Animations ----- */
+
   const section = document.querySelector(".section-one");
   const boxes = document.querySelectorAll(".goal1, .goal2");
 
@@ -82,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(section);
   }
 
-  /* ----- Reveal Cards: Tap to Flip on Touch ----- */
   const isTouch = window.matchMedia("(pointer: coarse)").matches;
 
   document.querySelectorAll(".reveal-card").forEach((card) => {
